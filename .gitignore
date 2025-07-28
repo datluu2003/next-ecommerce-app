@@ -53,6 +53,11 @@ backup-*
 *.tmp
 *~
 .#*
+old-*
+AUTH_*
+CLEANUP_*
+README_*
+FOLDERS_*
 
 # IDE files
 .idea/
