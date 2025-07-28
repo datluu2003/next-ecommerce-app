@@ -16,7 +16,7 @@ export default function ShowSP({ type = 'featured', title = 'Sản Phẩm Nổi 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch("http://localhost:8080/products", {
+        const res = await fetch("http://localhost:8080/api/products", {
           method: "GET",
           headers: {
             "Content-Type": "application/json"
@@ -28,9 +28,17 @@ export default function ShowSP({ type = 'featured', title = 'Sản Phẩm Nổi 
           throw new Error(`Lỗi khi gọi API: ${res.status} - ${errorText}`);
         }
         const data = await res.json();
-        const fixedProducts: Product[] = (data.data as unknown[]).map((item) => {
-          const prod = item as Partial<Product> & { _id: string };
-          let image = prod.image;
+        interface RawProduct {
+          _id: string;
+          slug: string;
+          name: string;
+          image: string | string[];
+          price: number;
+          description: string;
+          category?: { _id: string; name: string; image?: string };
+        }
+        const fixedProducts: Product[] = (data.data as RawProduct[]).map((item: RawProduct) => {
+          let image = item.image;
           if (typeof image === 'string' && image.startsWith('[')) {
             try {
               const arr = JSON.parse(image);
@@ -39,12 +47,14 @@ export default function ShowSP({ type = 'featured', title = 'Sản Phẩm Nổi 
           }
           if (Array.isArray(image) && image.length > 0) image = image[0];
           return {
-            id: prod._id!, // đảm bảo luôn có _id từ MongoDB
-            slug: prod.slug!,
-            name: prod.name!,
-            image: image!,
-            price: prod.price!,
-            description: prod.description!,
+            id: item._id,
+            _id: item._id,
+            slug: item.slug,
+            name: item.name,
+            image: image as string,
+            price: item.price,
+            description: item.description,
+            category: item.category,
           };
         });
         let filtered = fixedProducts;
@@ -61,7 +71,7 @@ export default function ShowSP({ type = 'featured', title = 'Sản Phẩm Nổi 
       }
     };
     fetchData();
-  }, []);
+  }, [type]);
 
   if (loading) return <div className="text-center py-8">Đang tải sản phẩm...</div>;
   if (error) return <div className="text-center text-red-500 py-8">{error}</div>;

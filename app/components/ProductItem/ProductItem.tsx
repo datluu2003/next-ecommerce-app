@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAppDispatch } from '@/store/hooks';
 import { addToCart } from '@/features/cart/cartSlice';
 
@@ -45,9 +46,6 @@ export default function ProductItem({ product }: ProductItemProps) {
       image: imageUrl,
       slug: product.slug
     }));
-    
-    // Hiển thị toast notification (có thể thêm sau)
-    // TODO: Thêm toast notification ở đây
   };
 
   return (
@@ -56,9 +54,11 @@ export default function ProductItem({ product }: ProductItemProps) {
       className="rounded-xl shadow-lg overflow-hidden bg-white hover:scale-105 transition-transform duration-200 border border-gray-100 flex flex-col"
       prefetch={false}
     >
-      <img
+      <Image
         src={getFirstImage(product.image)}
         alt={product.name}
+        width={300}
+        height={208}
         className="w-full h-52 object-cover object-center"
       />
       <div className="flex-1 flex flex-col justify-between p-5">

@@ -6,8 +6,13 @@ import ShopProductList from "./ShopProductList";
 import ShopPagination from "./ShopPagination";
 
 // Thêm type mở rộng cho Product
-
-type ProductWithCategory = Product & { category?: { _id: string } };
+type ProductWithCategory = Product & { 
+  category?: { 
+    _id: string; 
+    name: string; 
+    image?: string; 
+  } | undefined; 
+};
 
 interface ShopSideBarCategoryProps {
   products: ProductWithCategory[];

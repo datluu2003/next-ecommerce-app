@@ -33,7 +33,7 @@ function getFirstImage(image: string | string[]): string {
 // Hàm fetch chi tiết sản phẩm theo slug
 async function fetchProductDetail(slug: string) {
   try {
-    const res = await fetch(`http://localhost:8080/product/slug/${slug}`, { cache: 'no-store' });
+    const res = await fetch(`http://localhost:8080/api/product/slug/${slug}`, { cache: 'no-store' });
     if (!res.ok) return null;
     const data = await res.json();
     return data.data as Product; // API trả về { status, message, data }
@@ -110,7 +110,7 @@ function ProductDetailContent({
       if (!product.category) return;
       
       try {
-        const res = await fetch('http://localhost:8080/products', { cache: 'no-store' });
+        const res = await fetch('http://localhost:8080/api/products', { cache: 'no-store' });
         const data = await res.json();
         const allProducts: Product[] = data.data || [];
         const related = allProducts.filter(

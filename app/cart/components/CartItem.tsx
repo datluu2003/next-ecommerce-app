@@ -1,15 +1,7 @@
 'use client';
 import React from 'react';
 import Link from 'next/link';
-
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-  slug?: string;
-}
+import { CartItem } from '@/app/types/shared';
 
 interface CartItemProps {
   item: CartItem;

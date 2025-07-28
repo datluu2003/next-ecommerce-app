@@ -3,12 +3,15 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useCartState } from "@/app/hooks/useCartState";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   
   // Sử dụng custom hook để tránh hydration mismatch
   const { totalQuantity, isLoaded } = useCartState();
+  const { user, logout, isLoading } = useAuth();
 
   return (
     <header className="bg-white/80 backdrop-blur-lg border-b border-gray-200/50 sticky top-0 z-50 shadow-lg shadow-black/5">
@@ -23,7 +26,7 @@ export default function Header() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8 ">
             {[{ label: 'Trang chủ', href: '/' },{ label: 'Shop', href: '/Shop' }, { label: 'Giới thiệu', href: '#' }, { label: 'Dịch vụ', href: '#' } , { label: 'Liên hệ', href: '#' }].map((item) => (
-              <Link
+               <Link
                 key={item.label}
                 href={item.href}
                 className="text-gray-700 hover:text-green-700 font-medium transition-colors duration-200 relative group"
@@ -45,7 +48,11 @@ export default function Header() {
               </svg>
             </button>
             {/* Icon cart */}
-            <Link href="/cart" className="relative hidden md:block">
+            <Link 
+              href="/cart" 
+              className="relative hidden md:block"
+              prefetch={true}
+            >
               <button className="p-2 rounded-full hover:bg-green-100 transition">
                 {/* Heroicons Outline - Shopping Cart */}
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6 text-gray-700">
@@ -60,14 +67,69 @@ export default function Header() {
                 </span>
               )}
             </Link>
-            {/* Icon user */}
-            <button className="hidden md:block p-2 rounded-full hover:bg-green-100 transition">
-              {/* Heroicons Outline - User */}
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6 text-gray-700">
-                <circle cx="12" cy="8" r="4" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 20c0-4 8-4 8-4s8 0 8 4" />
-              </svg>
-            </button>
+            {/* User Menu */}
+            <div className="hidden md:block relative">
+              {!isLoading && user ? (
+                <div className="relative">
+                  <button 
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    className="flex items-center space-x-2 p-2 rounded-full hover:bg-green-100 transition"
+                  >
+                    <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-medium">
+                        {user.username ? user.username.charAt(0).toUpperCase() : 'U'}
+                      </span>
+                    </div>
+                    <span className="text-gray-700 text-sm font-medium">{user.username || 'User'}</span>
+                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  
+                  {userMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border">
+                      <Link
+                        href="/profile"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        Thông tin cá nhân
+                      </Link>
+                      <Link
+                        href="/orders"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        Đơn hàng của tôi
+                      </Link>
+                      <hr className="my-1" />
+                      <button
+                        onClick={() => {
+                          logout();
+                          setUserMenuOpen(false);
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Đăng xuất
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link 
+                  href="/login" 
+                  className="block"
+                  prefetch={true}
+                >
+                  <button className="p-2 rounded-full hover:bg-green-100 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6 text-gray-700">
+                      <circle cx="12" cy="8" r="4" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 20c0-4 8-4 8-4s8 0 8 4" />
+                    </svg>
+                  </button>
+                </Link>
+              )}
+            </div>
             {/* Mobile menu button */}
             <button
               className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200"

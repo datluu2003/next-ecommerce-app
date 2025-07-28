@@ -1,22 +1,32 @@
 'use client';
-import React from 'react';
-
-interface CustomerInfo {
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-  city: string;
-  district: string;
-  ward: string;
-}
+import React, { useState } from 'react';
+import { CustomerInfo } from '@/app/types/shared';
 
 interface CustomerInfoFormProps {
-  customerInfo: CustomerInfo;
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onCustomerInfoChange: (customerInfo: CustomerInfo) => void;
 }
 
-const CustomerInfoForm: React.FC<CustomerInfoFormProps> = ({ customerInfo, onInputChange }) => {
+const CustomerInfoForm: React.FC<CustomerInfoFormProps> = ({ onCustomerInfoChange }) => {
+  const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    city: '',
+    district: '',
+    ward: ''
+  });
+
+  // Xử lý thay đổi input
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const updatedInfo = {
+      ...customerInfo,
+      [name]: value
+    };
+    setCustomerInfo(updatedInfo);
+    onCustomerInfoChange(updatedInfo);
+  };
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
       <h2 className="text-lg font-semibold text-gray-900 mb-4">Thông tin khách hàng</h2>
@@ -30,7 +40,7 @@ const CustomerInfoForm: React.FC<CustomerInfoFormProps> = ({ customerInfo, onInp
             type="text"
             name="name"
             value={customerInfo.name}
-            onChange={onInputChange}
+            onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-black"
             required
           />
@@ -44,7 +54,7 @@ const CustomerInfoForm: React.FC<CustomerInfoFormProps> = ({ customerInfo, onInp
             type="email"
             name="email"
             value={customerInfo.email}
-            onChange={onInputChange}
+            onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-black"
             required
           />
@@ -58,7 +68,7 @@ const CustomerInfoForm: React.FC<CustomerInfoFormProps> = ({ customerInfo, onInp
             type="tel"
             name="phone"
             value={customerInfo.phone}
-            onChange={onInputChange}
+            onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-black"
             required
           />
@@ -72,7 +82,7 @@ const CustomerInfoForm: React.FC<CustomerInfoFormProps> = ({ customerInfo, onInp
             type="text"
             name="city"
             value={customerInfo.city}
-            onChange={onInputChange}
+            onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-black"
             required
           />
@@ -86,7 +96,7 @@ const CustomerInfoForm: React.FC<CustomerInfoFormProps> = ({ customerInfo, onInp
             type="text"
             name="district"
             value={customerInfo.district}
-            onChange={onInputChange}
+            onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-black"
             required
           />
@@ -100,7 +110,7 @@ const CustomerInfoForm: React.FC<CustomerInfoFormProps> = ({ customerInfo, onInp
             type="text"
             name="ward"
             value={customerInfo.ward}
-            onChange={onInputChange}
+            onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-black"
             required
           />
@@ -115,7 +125,7 @@ const CustomerInfoForm: React.FC<CustomerInfoFormProps> = ({ customerInfo, onInp
           type="text"
           name="address"
           value={customerInfo.address}
-          onChange={onInputChange}
+          onChange={handleInputChange}
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-black"
           placeholder="Số nhà, tên đường..."
           required

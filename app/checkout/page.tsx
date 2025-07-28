@@ -1,11 +1,12 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch } from '@/store/hooks';
 import { useCartState } from '@/app/hooks/useCartState';
 import { useSimpleToast } from '@/app/hooks/useSimpleToast';
 import SimpleToast from '@/app/components/SimpleToast';
 import { clearCart } from '@/features/cart/cartSlice';
+import { CustomerInfo } from '@/app/types/shared';
 
 // Import components
 import CheckoutLoadingState from './components/CheckoutLoadingState';
@@ -14,16 +15,6 @@ import CustomerInfoForm from './components/CustomerInfoForm';
 import PaymentMethodForm from './components/PaymentMethodForm';
 import OrderNotesForm from './components/OrderNotesForm';
 import OrderSummary from './components/OrderSummary';
-
-interface CustomerInfo {
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-  city: string;
-  district: string;
-  ward: string;
-}
 
 export default function CheckoutPage() {
   const { items, totalQuantity, totalAmount, isLoaded } = useCartState();
@@ -44,29 +35,18 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState<string>('cod');
   const [notes, setNotes] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [shouldRedirect, setShouldRedirect] = useState<boolean>(false);
   
   const shippingFee = 0; // Miễn phí vận chuyển
   const finalAmount = totalAmount + shippingFee;
 
   // Redirect nếu giỏ hàng trống
-  if (isLoaded && items.length === 0) {
-    router.push('/cart');
-    return null;
-  }
-
-  // Xử lý thay đổi thông tin khách hàng
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    
-    if (name === 'notes') {
-      setNotes(value);
-    } else {
-      setCustomerInfo(prev => ({
-        ...prev,
-        [name]: value
-      }));
+  useEffect(() => {
+    if (isLoaded && items.length === 0) {
+      setShouldRedirect(true);
+      router.push('/cart');
     }
-  };
+  }, [isLoaded, items.length, router]);
 
   // Validate form
   const validateForm = (): boolean => {
@@ -119,7 +99,7 @@ export default function CheckoutPage() {
         notes: notes.trim() || undefined
       };
 
-      const response = await fetch('http://localhost:8000/api/orders', {
+      const response = await fetch('http://localhost:8080/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -150,7 +130,7 @@ export default function CheckoutPage() {
     }
   };
 
-  if (!isLoaded) {
+  if (!isLoaded || shouldRedirect) {
     return <CheckoutLoadingState />;
   }
 
@@ -164,18 +144,15 @@ export default function CheckoutPage() {
             {/* Form thông tin */}
             <div className="lg:col-span-2 space-y-6">
               <CustomerInfoForm 
-                customerInfo={customerInfo}
-                onInputChange={handleInputChange}
+                onCustomerInfoChange={setCustomerInfo}
               />
 
               <PaymentMethodForm 
-                paymentMethod={paymentMethod}
                 onPaymentMethodChange={setPaymentMethod}
               />
 
               <OrderNotesForm 
-                notes={notes}
-                onNotesChange={handleInputChange}
+                onNotesChange={setNotes}
               />
             </div>
 

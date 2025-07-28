@@ -17,3 +17,9 @@ export interface Product {
   category?: { _id: string; name: string; image?: string };
   // Thêm các trường khác nếu cần
 }
+
+export interface Category {
+  id: string;
+  name: string;
+  image?: string;
+}

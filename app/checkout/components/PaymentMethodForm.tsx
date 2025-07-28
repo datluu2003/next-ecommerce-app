@@ -1,15 +1,19 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 
 interface PaymentMethodFormProps {
-  paymentMethod: string;
   onPaymentMethodChange: (method: string) => void;
 }
 
 const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ 
-  paymentMethod, 
   onPaymentMethodChange 
 }) => {
+  const [paymentMethod, setPaymentMethod] = useState<string>('cod');
+
+  const handlePaymentMethodChange = (method: string) => {
+    setPaymentMethod(method);
+    onPaymentMethodChange(method);
+  };
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
       <h2 className="text-lg font-semibold text-gray-900 mb-4">Phương thức thanh toán</h2>
@@ -21,7 +25,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({
             name="paymentMethod"
             value="cod"
             checked={paymentMethod === 'cod'}
-            onChange={(e) => onPaymentMethodChange(e.target.value)}
+            onChange={(e) => handlePaymentMethodChange(e.target.value)}
             className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300"
           />
           <span className="ml-3 text-sm font-medium text-gray-700">
@@ -35,7 +39,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({
             name="paymentMethod"
             value="bank_transfer"
             checked={paymentMethod === 'bank_transfer'}
-            onChange={(e) => onPaymentMethodChange(e.target.value)}
+            onChange={(e) => handlePaymentMethodChange(e.target.value)}
             className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300"
           />
           <span className="ml-3 text-sm font-medium text-gray-700">
@@ -49,7 +53,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({
             name="paymentMethod"
             value="momo"
             checked={paymentMethod === 'momo'}
-            onChange={(e) => onPaymentMethodChange(e.target.value)}
+            onChange={(e) => handlePaymentMethodChange(e.target.value)}
             className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300"
           />
           <span className="ml-3 text-sm font-medium text-gray-700">

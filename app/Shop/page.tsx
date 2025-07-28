@@ -24,7 +24,7 @@ type RawCategory = {
 
 export default async function ShopPage() {
   // Lấy sản phẩm
-  const res = await fetch("http://localhost:8080/products", { cache: "no-store" });
+  const res = await fetch("http://localhost:8080/api/products", { cache: "no-store" });
   const data = await res.json();
   const products = (data.data as RawProduct[] || []).map((prod) => {
     let image = prod.image;
@@ -37,6 +37,7 @@ export default async function ShopPage() {
     if (Array.isArray(image) && image.length > 0) image = image[0];
     return {
       id: prod._id,
+      _id: prod._id, // Thêm field _id
       name: prod.name,
       price: prod.price,
       image: image,
@@ -47,7 +48,7 @@ export default async function ShopPage() {
   });
 
   // Lấy danh mục
-  const resCat = await fetch("http://localhost:8080/categories", { cache: "no-store" });
+  const resCat = await fetch("http://localhost:8080/api/categories", { cache: "no-store" });
   const dataCat = await resCat.json();
   const categories = (dataCat.data as RawCategory[] || []).map((cat) => ({
     id: cat._id,
