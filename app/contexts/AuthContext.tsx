@@ -53,15 +53,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       });
       
-      if (response.ok) {
-        const userData = await response.json();
-        setUser(userData);
+      const result = await response.json();
+      
+      if (response.ok && result.status) {
+        // Backend trả về { status, message, data: user }
+        setUser(result.data);
       } else {
         localStorage.removeItem('token');
+        setUser(null);
       }
     } catch (error) {
       console.error('Failed to fetch user data:', error);
       localStorage.removeItem('token');
+      setUser(null);
     } finally {
       setIsLoading(false);
     }
@@ -77,12 +81,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         body: JSON.stringify({ email, password }),
       });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Đăng nhập thất bại');
+      const result = await response.json();
+
+      if (!response.ok || !result.status) {
+        throw new Error(result.message || 'Đăng nhập thất bại');
       }
 
-      const { token, user: userData } = await response.json();
+      // Backend trả về { status, message, data: { user, token } }
+      const { token, user: userData } = result.data;
       localStorage.setItem('token', token);
       setUser(userData);
     } catch (error) {
@@ -98,19 +104,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          username: `${userData.firstName} ${userData.lastName}`,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
           email: userData.email,
           password: userData.password,
-          phone_number: userData.phone,
+          phone: userData.phone,
         }),
       });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Đăng ký thất bại');
+      const result = await response.json();
+
+      if (!response.ok || !result.status) {
+        throw new Error(result.message || 'Đăng ký thất bại');
       }
 
-      const { token, user: newUser } = await response.json();
+      // Backend trả về { status, message, data: { user, token } }
+      const { token, user: newUser } = result.data;
       localStorage.setItem('token', token);
       setUser(newUser);
     } catch (error) {

@@ -64,3 +64,24 @@ input.no-spinner::-webkit-outer-spin-button {
 input.no-spinner {
   -moz-appearance: textfield;
 }
+
+/* Custom placeholder màu đen */
+.placeholder-black::placeholder {
+  color: #000000 !important;
+  opacity: 1 !important;
+}
+
+.placeholder-black::-webkit-input-placeholder {
+  color: #000000 !important;
+  opacity: 1 !important;
+}
+
+.placeholder-black::-moz-placeholder {
+  color: #000000 !important;
+  opacity: 1 !important;
+}
+
+.placeholder-black:-ms-input-placeholder {
+  color: #000000 !important;
+  opacity: 1 !important;
+}
