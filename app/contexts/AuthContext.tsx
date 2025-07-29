@@ -7,6 +7,9 @@ interface User {
   email: string;
   phone_number?: string;
   address?: string;
+  city?: string;
+  district?: string;
+  ward?: string;
   avatar?: string;
   role?: string;
 }

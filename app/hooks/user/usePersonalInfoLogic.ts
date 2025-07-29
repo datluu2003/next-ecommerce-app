@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '../../../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import { useUniversalToast } from '../../../hooks/useUniversalToast';
+import { useUniversalToast } from '../useUniversalToast';
 
 interface PersonalInfoForm {
   firstName: string;
@@ -18,7 +18,7 @@ interface PersonalInfoForm {
 }
 
 export const usePersonalInfoLogic = () => {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, logout } = useAuth();
   const router = useRouter();
   const { showToast } = useUniversalToast();
   
@@ -51,9 +51,9 @@ export const usePersonalInfoLogic = () => {
         email: String(user.email || ''),
         phone: String(user.phone_number || ''),
         address: String(user.address || ''),
-        city: '',
-        district: '',
-        ward: '',
+        city: String(user.city || ''),
+        district: String(user.district || ''),
+        ward: String(user.ward || ''),
         avatar: String(user.avatar || '')
       });
     }
@@ -101,6 +101,9 @@ export const usePersonalInfoLogic = () => {
         email: String(formData.email || '').trim(),
         phone: String(formData.phone || '').trim(),
         address: String(formData.address || '').trim(),
+        city: String(formData.city || '').trim(),
+        district: String(formData.district || '').trim(),
+        ward: String(formData.ward || '').trim(),
         avatar: String(formData.avatar || '').trim()
       };
 
@@ -166,9 +169,9 @@ export const usePersonalInfoLogic = () => {
         email: String(user.email || ''),
         phone: String(user.phone_number || ''),
         address: String(user.address || ''),
-        city: '',
-        district: '',
-        ward: '',
+        city: String(user.city || ''),
+        district: String(user.district || ''),
+        ward: String(user.ward || ''),
         avatar: String(user.avatar || '')
       });
     }
@@ -176,6 +179,43 @@ export const usePersonalInfoLogic = () => {
 
   const handleEdit = () => {
     setIsEditing(true);
+  };
+
+  // Xóa tài khoản
+  const handleDeleteAccount = async () => {
+    if (!user) {
+      showToast({ type: 'error', title: 'Lỗi', message: 'Không tìm thấy thông tin người dùng' });
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        showToast({ type: 'error', title: 'Lỗi xác thực', message: 'Vui lòng đăng nhập lại' });
+        router.push('/auth/login');
+        return;
+      }
+      const response = await fetch('http://localhost:8080/api/auth/delete-account', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const result = await response.json();
+      if (!response.ok || !result.status) {
+        throw new Error(result.message || `HTTP Error: ${response.status}`);
+      }
+      showToast({ type: 'success', title: 'Thành công', message: 'Tài khoản đã được xóa!' });
+      // Xóa token, chuyển hướng về trang đăng nhập
+      localStorage.removeItem('token');
+      logout();
+      router.push('/auth/login');
+    } catch (error) {
+      showToast({ type: 'error', title: 'Lỗi', message: error instanceof Error ? error.message : 'Có lỗi khi xóa tài khoản' });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return {
@@ -186,6 +226,7 @@ export const usePersonalInfoLogic = () => {
     handleInputChange,
     handleSubmit,
     handleCancel,
-    handleEdit
+    handleEdit,
+    handleDeleteAccount
   };
 };

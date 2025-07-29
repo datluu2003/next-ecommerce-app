@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { usePersonalInfoLogic } from './components/usePersonalInfoLogic';
+import { usePersonalInfoLogic } from '../../hooks/user/usePersonalInfoLogic';
 import PersonalInfoHeader from './components/PersonalInfoHeader';
 import AvatarSection from './components/AvatarSection';
 import BasicInfoSection from './components/BasicInfoSection';
@@ -18,7 +18,8 @@ export default function PersonalInfoPage() {
     handleInputChange,
     handleSubmit,
     handleCancel,
-    handleEdit
+    handleEdit,
+    handleDeleteAccount
   } = usePersonalInfoLogic();
 
   if (!user) {
@@ -66,7 +67,7 @@ export default function PersonalInfoPage() {
               onChange={handleInputChange}
             />
 
-            <AccountInfoSection user={user} />
+            <AccountInfoSection user={user} onDeleteAccount={handleDeleteAccount} isLoading={isLoading} />
           </form>
         </div>
       </div>
