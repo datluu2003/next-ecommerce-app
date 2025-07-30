@@ -16,8 +16,16 @@ interface LoginFormData {
 }
 
 const LoginForm: React.FC = () => {
+  // ...existing code...
+  // ...existing code...
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, user } = useAuth();
+  React.useEffect(() => {
+    if (user?.role === 'admin') {
+      console.log('User là admin, chuyển hướng sang admin:', user);
+      window.location.href = 'http://localhost:3000';
+    }
+  }, [user]);
   const [formData, setFormData] = useState<LoginFormData>({
     email: '',
     password: '',
@@ -69,7 +77,10 @@ const LoginForm: React.FC = () => {
     setIsLoading(true);
     try {
       await login(formData.email, formData.password);
-      router.push('/'); // Redirect to home page after successful login
+      console.log('User sau login:', user);
+      if (user?.role !== 'admin') {
+        router.push('/');
+      }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Đăng nhập thất bại';
       setErrors({ email: errorMessage });

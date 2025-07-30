@@ -18,7 +18,7 @@ interface PersonalInfoForm {
 }
 
 export const usePersonalInfoLogic = () => {
-  const { user, updateUser, logout } = useAuth();
+  const { user, updateUser } = useAuth();
   const router = useRouter();
   const { showToast } = useUniversalToast();
   
@@ -182,41 +182,6 @@ export const usePersonalInfoLogic = () => {
   };
 
   // Xóa tài khoản
-  const handleDeleteAccount = async () => {
-    if (!user) {
-      showToast({ type: 'error', title: 'Lỗi', message: 'Không tìm thấy thông tin người dùng' });
-      return;
-    }
-    setIsLoading(true);
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        showToast({ type: 'error', title: 'Lỗi xác thực', message: 'Vui lòng đăng nhập lại' });
-        router.push('/auth/login');
-        return;
-      }
-      const response = await fetch('http://localhost:8080/api/auth/delete-account', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const result = await response.json();
-      if (!response.ok || !result.status) {
-        throw new Error(result.message || `HTTP Error: ${response.status}`);
-      }
-      showToast({ type: 'success', title: 'Thành công', message: 'Tài khoản đã được xóa!' });
-      // Xóa token, chuyển hướng về trang đăng nhập
-      localStorage.removeItem('token');
-      logout();
-      router.push('/auth/login');
-    } catch (error) {
-      showToast({ type: 'error', title: 'Lỗi', message: error instanceof Error ? error.message : 'Có lỗi khi xóa tài khoản' });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return {
     user,
@@ -226,7 +191,6 @@ export const usePersonalInfoLogic = () => {
     handleInputChange,
     handleSubmit,
     handleCancel,
-    handleEdit,
-    handleDeleteAccount
+    handleEdit
   };
 };
