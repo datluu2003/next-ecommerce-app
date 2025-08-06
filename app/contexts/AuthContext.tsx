@@ -1,5 +1,17 @@
 'use client';
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect,  } from 'react';
+
+
+interface AuthContextType {
+  user: User | null;
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  register: (userData: RegisterData) => Promise<void>;
+  logout: () => void;
+  updateUser: (userData: Partial<User>) => void;
+  forgotPassword: (email: string) => Promise<void>; 
+  resetPassword: (email: string, resetToken: string, newPassword: string) => Promise<void>; 
+}
 
 interface User {
   _id: string;
@@ -13,16 +25,6 @@ interface User {
   avatar?: string;
   role?: string;
 }
-
-interface AuthContextType {
-  user: User | null;
-  isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (userData: RegisterData) => Promise<void>;
-  logout: () => void;
-  updateUser: (userData: Partial<User>) => void;
-}
-
 interface RegisterData {
   firstName: string;
   lastName: string;
@@ -32,6 +34,38 @@ interface RegisterData {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const forgotPassword = async (email: string) => {
+  try {
+    const response = await fetch('http://localhost:8080/users/forgot-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    const result = await response.json();
+    if (!response.ok || !result.status) {
+      throw new Error(result.message || 'Gửi email thất bại');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+const resetPassword = async (email: string, resetToken: string, newPassword: string) => {
+  try {
+    const response = await fetch('http://localhost:8080/api/reset-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, resetToken, newPassword }),
+    });
+    const result = await response.json();
+    if (!response.ok || !result.status) {
+      throw new Error(result.message || 'Đặt lại mật khẩu thất bại');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -148,6 +182,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     register,
     logout,
     updateUser,
+    forgotPassword,    
+    resetPassword,     
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -160,5 +196,7 @@ export const useAuth = () => {
   }
   return context;
 };
+
+
 
 export default AuthContext;

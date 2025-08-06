@@ -5,7 +5,7 @@ import AuthHeader from '@/app/components/auth/Common/AuthHeader';
 import InputField from '@/app/components/auth/Common/InputField';
 import SubmitButton from '@/app/components/auth/Common/SubmitButton';
 import FormContainer from '@/app/components/auth/Common/FormContainer';
-
+import { useAuth } from '@/app/contexts/AuthContext';
 interface ForgotPasswordFormData {
   email: string;
 }
@@ -17,6 +17,8 @@ const ForgotPasswordForm: React.FC = () => {
   const [errors, setErrors] = useState<Partial<ForgotPasswordFormData>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const { forgotPassword } = useAuth(); // Sử dụng useAuth
+
 
   const validateForm = (): boolean => {
     const newErrors: Partial<ForgotPasswordFormData> = {};
@@ -51,8 +53,7 @@ const ForgotPasswordForm: React.FC = () => {
     if (validateForm()) {
       setIsLoading(true);
       try {
-        // TODO: Implement forgot password logic
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await forgotPassword(formData.email); // Gọi API thực sự
         setIsSubmitted(true);
       } catch (error) {
         console.error('Forgot password failed:', error);
