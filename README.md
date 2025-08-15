@@ -1,3 +1,54 @@
+
+
+# BỔ SUNG: Cấu trúc & Tính năng thực tế của folder client
+
+## Cấu trúc thư mục chi tiết
+
+```
+client/
+├── app/                # Source code Next.js (pages, components, layouts)
+│   ├── cart/           # Trang giỏ hàng
+│   ├── checkout/       # Trang thanh toán
+│   ├── components/     # Các component dùng chung
+│   ├── contexts/       # React context cho state toàn cục
+│   ├── Home/           # Trang chủ
+│   ├── hooks/          # Custom hooks
+│   ├── order-success/  # Trang xác nhận đơn hàng
+│   ├── product/        # Trang chi tiết sản phẩm
+│   ├── products/       # Trang danh sách sản phẩm
+│   ├── profile/        # Trang cá nhân người dùng
+│   ├── providers.tsx   # Provider cho context
+│   ├── Shop/           # Trang danh sách shop
+│   ├── types/          # Định nghĩa kiểu dữ liệu
+├── features/           # Redux features (ví dụ: cart)
+├── public/             # Ảnh, tài nguyên tĩnh
+├── store/              # Cấu hình Redux store
+├── package.json        # Thông tin và scripts dự án
+├── tailwind.config.js  # Cấu hình TailwindCSS
+├── tsconfig.json       # Cấu hình TypeScript
+└── README.md           # Tài liệu dự án
+```
+
+## Tính năng bổ sung
+
+- Duyệt, tìm kiếm, lọc sản phẩm
+- Quản lý giỏ hàng, thanh toán nhiều bước
+- Trang chi tiết sản phẩm, thư viện ảnh
+- Quản lý profile người dùng, đăng nhập
+- Responsive UI cho mọi thiết bị
+- Toast notification, xác thực form
+- Quản lý state với Redux Toolkit
+
+## Scripts
+
+- `npm run dev` - Chạy server phát triển
+- `npm run build` - Build production
+- `npm run start` - Chạy production server
+- `npm run lint` - Kiểm tra code với ESLint
+
+## Tech stack
+
+**Frontend:** Next.js, React, TailwindCSS, Redux Toolkit, TypeScript
 # Ứng Dụng Thương Mại Điện Tử Next.js
 
 Một ứng dụng thương mại điện tử full-stack hiện đại được xây dựng với Next.js 14, TypeScript và Redux Toolkit. Cung cấp trải nghiệm mua sắm hoàn chỉnh với tính năng duyệt sản phẩm, quản lý giỏ hàng và thanh toán.
